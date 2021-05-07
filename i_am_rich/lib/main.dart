@@ -13,8 +13,7 @@ void main() {
         ),
         body: Center(
           child: Image(
-            image: NetworkImage(
-                'https://image.freepik.com/fotos-gratis/diamond-3d-render_103577-5774.jpg'),
+            image: AssetImage('images/diamond.png'),
           ),
         ),
       ),

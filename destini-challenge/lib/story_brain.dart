@@ -1,7 +1,7 @@
 import 'story.dart';
 
 class StoryBrain {
-  int storyNumber = 0;
+  int _storyNumber = 0;
 
   List<Story> _storyData = [
     Story(
@@ -47,6 +47,12 @@ class StoryBrain {
     return this._storyData[storyNumber].choice2;
   }
 
+  int get storyNumber => _storyNumber;
+
+  set storyNumber(int storyNumber) {
+    _storyNumber = storyNumber;
+  }
+
   void restart() {
     storyNumber = 0;
   }
@@ -68,8 +74,8 @@ class StoryBrain {
                   : restart();
     }
   }
+
+  bool buttonShouldBeVisible() {
+    return storyNumber == 0 || storyNumber == 1 || storyNumber == 2 ? true : false;
+  }
 }
-
-//TODO: Step 25 - Change the storyNumber property into a private property so that only story_brain.dart has access to it. You can do this by right clicking on the name (storyNumber) and selecting Refactor -> Rename to make the change across all the places where it's used.
-
-//TODO: Step 27 - Create a method called buttonShouldBeVisible() which checks to see if storyNumber is 0 or 1 or 2 (when both buttons should show choices) and return true if that is the case, else it should return false.

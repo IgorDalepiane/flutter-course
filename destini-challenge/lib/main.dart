@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 //TODO: Step 15 - Run the app and see if you can see the screen update with the first story. Delete this TODO if it looks as you expected.
 
@@ -7,6 +8,7 @@ void main() => runApp(Destini());
 class Destini extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData.dark(),
       home: StoryPage(),
     );
@@ -22,9 +24,16 @@ class StoryPage extends StatefulWidget {
 class _StoryPageState extends State<StoryPage> {
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setEnabledSystemUIOverlays([]);
+
     return Scaffold(
       body: Container(
-        //TODO: Step 1 - Add background.png to this Container as a background image.
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('images/background.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
         padding: EdgeInsets.symmetric(vertical: 50.0, horizontal: 15.0),
         constraints: BoxConstraints.expand(),
         child: SafeArea(

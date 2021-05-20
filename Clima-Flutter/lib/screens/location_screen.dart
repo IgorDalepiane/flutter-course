@@ -17,7 +17,7 @@ class _LocationScreenState extends State<LocationScreen> {
   String weatherMessage;
   String weatherIcon;
   String cityName;
-
+  String errorMessage;
   @override
   void initState() {
     super.initState();
@@ -26,6 +26,14 @@ class _LocationScreenState extends State<LocationScreen> {
 
   void updateUI(dynamic weatherData) {
     setState(() {
+      if (weatherData == null) {
+        temperature = 0;
+        weatherIcon = 'Error';
+        weatherMessage = '';
+        cityName = '';
+        errorMessage = 'Unable to get weather data';
+        return;
+      }
       double temp = weatherData['main']['temp'];
       temperature = temp.toInt();
       weatherMessage = weather.getMessage(temperature);
@@ -57,7 +65,10 @@ class _LocationScreenState extends State<LocationScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   FlatButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      var weatherData = await weather.getLocationWeather();
+                      updateUI(weatherData);
+                    },
                     child: Icon(
                       Icons.near_me,
                       size: 50.0,
@@ -90,7 +101,7 @@ class _LocationScreenState extends State<LocationScreen> {
               Padding(
                 padding: EdgeInsets.only(right: 15.0),
                 child: Text(
-                  "$weatherMessage in $cityName!",
+                  errorMessage != null ? "$weatherMessage in $cityName!" : weatherMessage,
                   textAlign: TextAlign.right,
                   style: kMessageTextStyle,
                 ),

@@ -11,33 +11,39 @@ class PriceScreen extends StatefulWidget {
 class _PriceScreenState extends State<PriceScreen> {
   CoinData coinModel = CoinData();
   String selectedCurrency = 'USD';
-  Map cryptoRates = {};
+  Map<String, String> cryptoRates = {};
+  bool isWaiting = false;
 
   @override
   void initState() {
     super.initState();
-    // getCryptoValue();
+    getCryptoValue();
   }
 
   void getCryptoValue() async {
-    for (String crypto in cryptoList) {
-      print(crypto);
-      var coinData = await coinModel.getCoinData(crypto, selectedCurrency);
-      var cryptoRateTemp = coinData['rate'];
+    isWaiting = true;
+    try {
+      var coinData = await coinModel.getCoinData(selectedCurrency);
+      isWaiting = false;
       setState(() {
-        cryptoRates[crypto] = double.parse(cryptoRateTemp.toStringAsFixed(2));
+        cryptoRates = coinData;
       });
+    } catch (e) {
+      print(e);
     }
   }
 
   List<ReusableCurrencyCard> getCryptoWidgets() {
     List<ReusableCurrencyCard> widgetList = [];
-    for (var crypto in cryptoRates.keys) {
-      print(crypto);
-      widgetList.add(ReusableCurrencyCard(
-          cryptoName: crypto, cryptoRate: cryptoRates[crypto], currencyName: selectedCurrency));
+    for (var crypto in cryptoList) {
+      widgetList.add(
+        ReusableCurrencyCard(
+          cryptoName: crypto,
+          cryptoRate: isWaiting ? '?' : cryptoRates[crypto],
+          currencyName: selectedCurrency,
+        ),
+      );
     }
-
     return widgetList;
   }
 
@@ -73,7 +79,10 @@ class _PriceScreenState extends State<PriceScreen> {
       backgroundColor: Colors.lightBlue,
       itemExtent: 32.0,
       onSelectedItemChanged: (selectedIndex) {
-        print(selectedIndex);
+        setState(() {
+          selectedCurrency = currenciesList[selectedIndex];
+          getCryptoValue();
+        });
       },
       children: pickerItens,
     );
@@ -101,7 +110,7 @@ class _PriceScreenState extends State<PriceScreen> {
             alignment: Alignment.center,
             padding: EdgeInsets.only(bottom: 30.0),
             color: Colors.lightBlue,
-            child: Platform.isIOS ? iOSPicker() : androidDropdown(),
+            child: iOSPicker(),
           ),
         ],
       ),
@@ -116,7 +125,7 @@ class ReusableCurrencyCard extends StatelessWidget {
     @required this.currencyName,
   });
 
-  final double cryptoRate;
+  final String cryptoRate;
   final String cryptoName;
   final String currencyName;
   @override

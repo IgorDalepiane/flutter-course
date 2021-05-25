@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flash_chat/components/rounded_button.dart';
 import 'package:flash_chat/constants.dart';
 import 'package:flash_chat/screens/chat_screen.dart';
@@ -16,6 +17,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final _auth = FirebaseAuth.instance;
   bool showSpinner = false;
 
+  bool fieldError = false;
   String email;
   String password;
 
@@ -49,10 +51,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 onChanged: (value) {
                   email = value;
                 },
-                decoration: kTextFieldDecoration.copyWith(hintText: 'Enter your email'),
+                decoration: kTextFieldDecoration.copyWith(
+                    hintText: 'Enter your email', errorText: fieldError ? '' : null),
               ),
               SizedBox(
-                height: 8.0,
+                height: 20.0,
               ),
               TextField(
                 obscureText: true,
@@ -60,7 +63,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 onChanged: (value) {
                   password = value;
                 },
-                decoration: kTextFieldDecoration.copyWith(hintText: 'Enter your password'),
+                decoration: kTextFieldDecoration.copyWith(
+                    hintText: 'Enter your password', errorText: fieldError ? 'Invalid credentials' : null),
               ),
               SizedBox(
                 height: 24.0,
@@ -68,10 +72,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               RoundedButton(
                 color: Colors.blueAccent,
                 onPressed: () async {
-                  setState(() {
-                    showSpinner = true;
-                  });
                   try {
+                    setState(() {
+                      showSpinner = true;
+                    });
                     final newUser = await _auth.createUserWithEmailAndPassword(
                       email: email,
                       password: password,
@@ -79,12 +83,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     if (newUser != null) {
                       Navigator.pushNamed(context, ChatScreen.id);
                     }
-
                     setState(() {
                       showSpinner = false;
                     });
                   } catch (e) {
                     print(e);
+                    await Future.delayed(Duration(seconds: 1), () {});
+                    setState(() {
+                      fieldError = true;
+                      showSpinner = false;
+                    });
                   }
                 },
                 title: 'Register',

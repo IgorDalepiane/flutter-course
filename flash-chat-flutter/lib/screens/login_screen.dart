@@ -15,6 +15,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _auth = FirebaseAuth.instance;
   bool showSpinner = false;
+  bool fieldError = false;
   String email;
   String password;
 
@@ -48,7 +49,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 onChanged: (value) {
                   email = value;
                 },
-                decoration: kTextFieldDecoration.copyWith(hintText: 'Enter your email'),
+                decoration: kTextFieldDecoration.copyWith(
+                    hintText: 'Enter your email', errorText: fieldError ? '' : null),
               ),
               SizedBox(
                 height: 8.0,
@@ -59,7 +61,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 onChanged: (value) {
                   password = value;
                 },
-                decoration: kTextFieldDecoration.copyWith(hintText: 'Enter your password'),
+                decoration: kTextFieldDecoration.copyWith(
+                    hintText: 'Enter your password', errorText: fieldError ? 'Invalid credentials' : null),
               ),
               SizedBox(
                 height: 24.0,
@@ -71,22 +74,23 @@ class _LoginScreenState extends State<LoginScreen> {
                     setState(() {
                       showSpinner = true;
                     });
-                    final newUser = await _auth.signInWithEmailAndPassword(
+                    final user = await _auth.signInWithEmailAndPassword(
                       email: email,
                       password: password,
                     );
-                    if (newUser != null) {
+                    if (user != null) {
                       Navigator.pushNamed(context, ChatScreen.id);
                     }
                     setState(() {
                       showSpinner = false;
                     });
                   } catch (e) {
-                    if (e.code == 'user-not-found') {
-                      print('No user found for that email.');
-                    } else if (e.code == 'wrong-password') {
-                      print('Wrong password provided for that user.');
-                    }
+                    print(e);
+                    await Future.delayed(Duration(seconds: 1), () {});
+                    setState(() {
+                      fieldError = true;
+                      showSpinner = false;
+                    });
                   }
                 },
                 title: 'Log In',

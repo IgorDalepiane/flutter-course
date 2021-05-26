@@ -65,7 +65,7 @@ class TasksScreen extends StatelessWidget {
           ),
           Expanded(
             child: Container(
-              padding: EdgeInsets.symmetric(vertical: 40, horizontal: 18),
+              padding: EdgeInsets.only(top: 40, left: 18, right: 18, bottom: 60),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(

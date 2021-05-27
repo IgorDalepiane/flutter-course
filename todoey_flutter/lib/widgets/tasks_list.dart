@@ -11,8 +11,8 @@ class TasksList extends StatelessWidget {
         return ListView.builder(
           itemBuilder: (context, index) {
             return TaskTile(
-              taskTitle: taskData.tasksList[index].name,
-              isChecked: taskData.tasksList[index].isDone,
+              taskTitle: taskData.tasks[index].name,
+              isChecked: taskData.tasks[index].isDone,
               checkboxCallback: (checkboxState) {
                 // setState(() {
                 //   widget.tasks[index].toggleDone();
